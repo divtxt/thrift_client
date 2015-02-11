@@ -5,7 +5,7 @@
 #
 
 require 'thrift'
-require 'greeter_types'
+require_relative 'greeter_types'
 
 module Greeter
   class Client
