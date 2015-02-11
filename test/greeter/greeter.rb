@@ -33,6 +33,21 @@ module Greeter
     def send_yo(name)
       send_oneway_message('yo', Yo_args, :name => name)
     end
+    def oops()
+      send_oops()
+      recv_oops()
+    end
+
+    def send_oops()
+      send_message('oops', Oops_args)
+    end
+
+    def recv_oops()
+      result = receive_message(Oops_result)
+      raise result.a unless result.a.nil?
+      return
+    end
+
   end
 
   class Processor
@@ -49,6 +64,17 @@ module Greeter
       args = read_args(iprot, Yo_args)
       @handler.yo(args.name)
       return
+    end
+
+    def process_oops(seqid, iprot, oprot)
+      args = read_args(iprot, Oops_args)
+      result = Oops_result.new()
+      begin
+        @handler.oops()
+      rescue ::OopsException => a
+        result.a = a
+      end
+      write_result(result, oprot, 'oops', seqid)
     end
 
   end
@@ -108,6 +134,37 @@ module Greeter
 
     FIELDS = {
 
+    }
+
+    def struct_fields; FIELDS; end
+
+    def validate
+    end
+
+    ::Thrift::Struct.generate_accessors self
+  end
+
+  class Oops_args
+    include ::Thrift::Struct, ::Thrift::Struct_Union
+
+    FIELDS = {
+
+    }
+
+    def struct_fields; FIELDS; end
+
+    def validate
+    end
+
+    ::Thrift::Struct.generate_accessors self
+  end
+
+  class Oops_result
+    include ::Thrift::Struct, ::Thrift::Struct_Union
+    A = 1
+
+    FIELDS = {
+      A => {:type => ::Thrift::Types::STRUCT, :name => 'a', :class => ::OopsException}
     }
 
     def struct_fields; FIELDS; end
